@@ -91,7 +91,6 @@ export async function FetchPostsByUserId(userId: number): Promise<Post[]> {
   const local = readPostsLS();
   if (local.length > 0) {
     const filtered = local.filter((p) => p.userId === userId);
-    console.log(filtered);
     const parsed = postSchema.parse(filtered);
     return parsed;
   } else {

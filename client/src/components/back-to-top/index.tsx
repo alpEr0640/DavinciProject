@@ -1,9 +1,7 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { ArrowUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useMainContext } from "@/context/main-context";
+import { Button } from "../button";
 
 export default function BackToTop({
   targetId = "index",

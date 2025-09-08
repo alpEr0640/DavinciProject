@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { AppLayout } from "../App";
-import { RouterErrorBoundary } from "../components/layout/error-boundary";
 import Homepage from "../pages/Home";
 import NotFoundPage from "../pages/error/not-found";
+import { RouterErrorBoundary } from "@/components";
 
 export const router = createBrowserRouter([
   {

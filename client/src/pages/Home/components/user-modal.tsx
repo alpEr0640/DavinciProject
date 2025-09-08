@@ -1,7 +1,7 @@
 import Modal from "./modal";
 import { useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { initials } from "@/utils/initial";
+import { Button } from "@/components";
 
 export type User = {
   id: number;
@@ -88,7 +88,7 @@ export default function UserDetailModal({
                 </span>
               </div>
 
-              <div className="mt-4 flex gap-2">
+             <div className="mt-4 flex flex-col md:flex-row gap-2">
                 {!!onSeePosts && (
                   <Button variant="outline" onClick={() => onSeePosts(user.id)}>
                     Gönderilerini Gör
@@ -147,7 +147,7 @@ export default function UserDetailModal({
                 />
               </div>
 
-              <div className="pt-2 flex gap-2">
+              <div className="mt-4 flex flex-col sm:flex-row gap-2">
                 <Button type="submit" disabled={!canSave || !isDirty}>
                   Kaydet
                 </Button>

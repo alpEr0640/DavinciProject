@@ -27,10 +27,10 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur bg-slate-900/60">
+    <header className="sticky top-0 z-40 backdrop-blur bg-slate-900">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link to="/" className="group inline-flex items-center gap-2">
-          <span className="text-2xl font-bold tracking-wide text-slate-100">
+          <span className="text-2xl font-bold tracking-wide text-slate-100 pl-2">
             Da Vinci Board Games
           </span>
         </Link>
@@ -50,7 +50,7 @@ export default function Navbar() {
         </nav>
 
         <button
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 md:hidden"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-100 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 md:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls="mobile-menu"

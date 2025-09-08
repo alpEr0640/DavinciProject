@@ -1,8 +1,8 @@
 import { memo } from "react";
 import type { User } from "@/services/users/type";
-import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, MessageSquareText } from "lucide-react";
 import { initials } from "@/utils/initial";
+import { Button } from "@/components";
 
 type Props = {
   user: User;
