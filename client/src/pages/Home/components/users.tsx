@@ -15,11 +15,14 @@ type UserSortKey = "id" | "name" | "username" | "email";
 export default function Users() {
   const { getUsers, updateUser, removeUser } = useUserActions();
   const { data, isLoading, isError } = getUsers;
+
   const [editMode, setEditMode] = useState(false);
   const { selectedUserId, setSelectedUserId, scrollToId } = useMainContext();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [createUser, setCreateUser] = useState<boolean>(false);
   const confirm = useConfirm();
+
+  /* arama ve sıralama */
   const [q, setQ] = useState("");
   const dq = useDebouncedValue(q, 300);
   const [sortBy, setSortBy] = useState<UserSortKey>("id");
@@ -47,9 +50,10 @@ export default function Users() {
     });
     return rows;
   }, [data, dq, sortBy, dir]);
-
+  /* Bekleme Aralığı */
   const timerRef = useRef<number | null>(null);
 
+  /* modal kontrol */
   const handleCloseDetailModal = () => {
     setSelectedUser(null);
     setEditMode(false);
@@ -63,6 +67,7 @@ export default function Users() {
   const handleOpenCreateUserModal = () => setCreateUser(true);
   const handleCloseCreateUserModal = () => setCreateUser(false);
 
+  /* Etkileşim Fonksiyonları */
   const handleSeePosts = (userId: number) => {
     setSelectedUserId(userId);
     handleCloseDetailModal();
@@ -127,19 +132,21 @@ export default function Users() {
     <section id="Users">
       {!isLoading && !isError && (
         <div className="pt-4">
-          <div className="flex flex-col md:flex-row items-center md:justify-between gap-4 mb-4">
+          <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between mb-4">
             <h2 className="text-black text-2xl font-bold">Kullanıcılar</h2>
-            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+
+            {/* 🔧 toolbar */}
+            <div className="flex w-full flex-col sm:flex-row sm:flex-wrap gap-2 items-stretch">
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Ara: ad, kullanıcı adı, e-posta"
-                className="w-full sm:w-64 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                className="w-full sm:flex-1 min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
               />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as UserSortKey)}
-                className="rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                className="w-full sm:w-48 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
               >
                 <option value="id">ID</option>
                 <option value="name">Ad</option>
@@ -148,12 +155,16 @@ export default function Users() {
               </select>
               <Button
                 variant="outline"
+                className="w-full sm:w-auto"
                 onClick={() => setDir((d) => (d === "asc" ? "desc" : "asc"))}
                 title="Sıralama yönü"
               >
                 {dir === "asc" ? "↑" : "↓"}
               </Button>
-              <Button onClick={handleOpenCreateUserModal}>
+              <Button
+                className="w-full sm:w-auto"
+                onClick={handleOpenCreateUserModal}
+              >
                 Yeni Kullanıcı Ekle
               </Button>
             </div>
@@ -164,7 +175,7 @@ export default function Users() {
               Sonuç bulunamadı.
             </div>
           ) : (
-            <div className="grid grid-cols-1 items-stretch justify-center gap-4 lg:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               {rows.map((u: User) => (
                 <UserCard
                   key={u.id}
