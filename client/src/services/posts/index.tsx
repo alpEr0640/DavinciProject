@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { axiosAuth } from "../../lib/axios";
 import { usersSchema, type User } from "../users/type";
 import { postSchema, type Post } from "./types";
@@ -74,6 +75,7 @@ export async function createPostLS(
   const newPost: Post = { id, ...input };
 
   writePostsLS([...posts, newPost]);
+  toast.success("Gönderi başarıyla oluşturuldu")
   return newPost;
 }
 

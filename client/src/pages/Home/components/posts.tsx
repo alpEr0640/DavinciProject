@@ -71,7 +71,7 @@ export default function Posts() {
     setEditMode(false);
   };
 
-    /* etkileşim fonksiyonları */
+  /* etkileşim fonksiyonları */
   const handleSeeUserPosts = (userId: number) => {
     handleClose();
     setSelectedUserId(userId);
@@ -123,17 +123,17 @@ export default function Posts() {
           <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between mb-4">
             <h2 className="text-black text-2xl font-bold">Gönderiler</h2>
 
-            <div className="flex w-full flex-col sm:flex-row sm:flex-wrap gap-2 items-stretch">
+            <div className="flex w-full  flex-col sm:flex-row sm:flex-wrap gap-2 items-stretch">
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Ara: başlık, içerik, yazar"
-                className="w-full min-w-12 sm:flex-1 min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                className="w-full h-9 min-w-12 sm:flex-1 min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
               />
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as PostSortKey)}
-                className="w-full sm:w-48 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                className="w-full h-9 sm:w-48 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
               >
                 <option value="id">ID</option>
                 <option value="title">Başlık</option>

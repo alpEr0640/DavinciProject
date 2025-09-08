@@ -1,36 +1,39 @@
 
-****Frontend Developer Başvuru Görevi****
+# ****Frontend Developer Başvuru Görevi****
 
 JSONPlaceholder API’sini kullanarak Users ve Posts listelerini gösteren, CRUD işlemleri ve userId üzerinden liste ilişkisi bulunan uygulama.
 
-**Canlı Proje Linki**
+## Canlı Proje Linki
 
 - [https://davinci-project-seven.vercel.app/](https://davinci-project-seven.vercel.app/)
 
-## **Projeyi Klonlama ve Kurulum**
+# **Projeyi Klonlama ve Kurulum**
 
-# Repo’yu klonla
+## Repo’yu klonla
 
 ```bash 
 git clone https://github.com/alpEr0640/DavinciProject.git
 ```
-# Client dizinine gir
+## Client dizinine gir
 ```bash 
 cd client
 ```
-# Bağımlılıkları yükle
+## Bağımlılıkları yükle
 ```bash 
 npm install
 ```
-# .env dosyası oluşturma
+## enviroment dosyası oluşturma
+Projenin kök klasörüne .env dosyası oluşturun
+
+Dosyanın içerisine aşağıdaki değişkeni ekleyin
 ```bash 
 VITE_API_SERVER_URL=https://jsonplaceholder.typicode.com/
 ```
-# Build al
+## Build al
 ```bash 
 npm run build
 ```
-# Preview ile çalıştır
+## Preview ile çalıştır
 ```bash 
 npm run preview
 ```
@@ -46,7 +49,10 @@ npm run preview
   
 ## Kullanılan Teknolojiler
 
-**Typescript** **Tailwind** **Vite**  **Eslint** 
+- **Typescript**
+- **Tailwind**
+- **Vite**  
+- **Eslint** 
 
 
   

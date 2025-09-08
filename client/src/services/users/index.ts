@@ -1,6 +1,7 @@
 import { axiosAuth } from "../../lib/axios";
 import { usersSchema, type User } from "./type";
 import { postSchema, type Post } from "../posts/types";
+import toast from "react-hot-toast";
 
 const LS_USERS = "users";
 const LS_POSTS = "posts";
@@ -67,10 +68,30 @@ export async function updateUserByIdLS(next: User) {
   const idx = users.findIndex((u) => u.id === next.id);
   if (idx === -1) return false;
 
+  const norm = (s?: string) => (s ?? "").trim().toLowerCase();
+
+  const usernameTaken = users.some(
+    (u) => u.id !== next.id && norm(u.username) === norm(next.username)
+  );
+
+  const emailTaken = users.some(
+    (u) => u.id !== next.id && norm(u.email) === norm(next.email)
+  );
+
+  if (usernameTaken) {
+    toast.error("Bu kullanıcı adı zaten kullanılıyor");
+    throw new Error("Bu kullanıcı adı zaten kullanılıyor.");
+  }
+  if (emailTaken) {
+    toast.error("Bu e-posta zaten kayıtlı.");
+    throw new Error("Bu e-posta zaten kayıtlı.");
+  }
+
   const nextUsers = users.map((u) =>
     u.id === next.id ? { ...u, ...next } : u
   );
   writeUsersLS(nextUsers);
+
   return true;
 }
 
@@ -85,12 +106,19 @@ export async function createUserLS(
   const emailTaken = users.some(
     (u) => u.email.toLowerCase() === input.email.toLowerCase()
   );
-  if (usernameTaken) throw new Error("Bu kullanıcı adı zaten kullanılıyor.");
-  if (emailTaken) throw new Error("Bu e-posta zaten kayıtlı.");
+  if (usernameTaken) {
+    toast.error("Bu kullanıcı adı zaten kullanılıyor");
+    throw new Error("Bu kullanıcı adı zaten kullanılıyor.");
+  }
+  if (emailTaken) {
+    toast.error("Bu e-posta zaten kayıtlı.");
+    throw new Error("Bu e-posta zaten kayıtlı.");
+  }
 
   const id = getNextUserIdLS();
   const newUser: User = { id, ...input };
   writeUsersLS([...users, newUser]);
+  toast.success("Kullanıcı Başarıyla Oluşturuldu");
   return newUser;
 }
 
