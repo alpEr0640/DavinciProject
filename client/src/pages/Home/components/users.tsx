@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { UserCard } from "./user-card";
 import UserDetailModal from "./user-modal";
 import { useUserActions } from "@/hooks/users";
@@ -8,6 +8,9 @@ import AddUserModal from "./add-user-modal";
 import { useConfirm } from "@/components/confirm-dialog";
 import { Button } from "@/components";
 import toast from "react-hot-toast";
+import { useDebouncedValue } from "@/hooks/debounce";
+
+type UserSortKey = "id" | "name" | "username" | "email";
 
 export default function Users() {
   const { getUsers, updateUser, removeUser } = useUserActions();
@@ -16,8 +19,36 @@ export default function Users() {
   const { selectedUserId, setSelectedUserId, scrollToId } = useMainContext();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [createUser, setCreateUser] = useState<boolean>(false);
-  const timerRef = useRef<number | null>(null);
   const confirm = useConfirm();
+  const [q, setQ] = useState("");
+  const dq = useDebouncedValue(q, 300);
+  const [sortBy, setSortBy] = useState<UserSortKey>("id");
+  const [dir, setDir] = useState<"asc" | "desc">("asc");
+
+  const rows = useMemo(() => {
+    let rows = data ?? [];
+    const s = dq.trim().toLocaleLowerCase("tr");
+    if (s) {
+      rows = rows.filter((u) =>
+        [u.name, u.username, u.email]
+          .filter(Boolean)
+          .some((v) => String(v).toLocaleLowerCase("tr").includes(s))
+      );
+    }
+    rows = [...rows].sort((a, b) => {
+      const av = a[sortBy] as string | number;
+      const bv = b[sortBy] as string | number;
+      if (typeof av === "number" && typeof bv === "number") {
+        return dir === "asc" ? av - bv : bv - av;
+      }
+      return dir === "asc"
+        ? String(av).localeCompare(String(bv), "tr")
+        : String(bv).localeCompare(String(av), "tr");
+    });
+    return rows;
+  }, [data, dq, sortBy, dir]);
+
+  const timerRef = useRef<number | null>(null);
 
   const handleCloseDetailModal = () => {
     setSelectedUser(null);
@@ -61,9 +92,12 @@ export default function Users() {
 
     removeUser.mutate(user.id, {
       onSuccess: (ok, deletedId) => {
-        if (!ok) alert("Kullanıcı bulunamadı veya zaten silinmiş.");
-        else if (selectedUserId === deletedId) setSelectedUserId(undefined);
-        toast.success(`${user.name} silindi`);
+        if (!ok) {
+          toast.error("Kullanıcı bulunamadı veya zaten silinmiş.");
+        } else {
+          if (selectedUserId === deletedId) setSelectedUserId(undefined);
+          toast.success(`${user.name} silindi`);
+        }
       },
       onError: () => toast.error("Silme sırasında bir hata oluştu."),
     });
@@ -74,9 +108,10 @@ export default function Users() {
       onSuccess: (ok) => {
         if (ok) {
           handleCloseDetailModal();
-          toast.success(`${payload.name} Güncellendi`);
+          toast.success(`${payload.name} güncellendi`);
+        } else {
+          toast.error("Güncelleme sırasında bir hata oluştu.");
         }
-        else toast.error("Güncelleme sırasında bir hata oluştu.");
       },
     });
   };
@@ -92,20 +127,45 @@ export default function Users() {
     <section id="Users">
       {!isLoading && !isError && (
         <div className="pt-4">
-          <div className="flex flex-col md:flex-row items-center md:justify-between gap-y-4 mb-4">
-            <h2 className="text-black text-2xl font-bold"> Kullanıcılar </h2>
-            <Button onClick={handleOpenCreateUserModal}>
-              Yeni Kullanıcı Ekle
-            </Button>
+          <div className="flex flex-col md:flex-row items-center md:justify-between gap-4 mb-4">
+            <h2 className="text-black text-2xl font-bold">Kullanıcılar</h2>
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Ara: ad, kullanıcı adı, e-posta"
+                className="w-full sm:w-64 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+              />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as UserSortKey)}
+                className="rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+              >
+                <option value="id">ID</option>
+                <option value="name">Ad</option>
+                <option value="username">Kullanıcı Adı</option>
+                <option value="email">E-posta</option>
+              </select>
+              <Button
+                variant="outline"
+                onClick={() => setDir((d) => (d === "asc" ? "desc" : "asc"))}
+                title="Sıralama yönü"
+              >
+                {dir === "asc" ? "↑" : "↓"}
+              </Button>
+              <Button onClick={handleOpenCreateUserModal}>
+                Yeni Kullanıcı Ekle
+              </Button>
+            </div>
           </div>
 
-          {!data || data.length === 0 ? (
+          {!rows || rows.length === 0 ? (
             <div className="rounded-2xl border border-slate-200 bg-white p-6 text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
-              Aramanıza uygun sonuç bulunamadı.
+              Sonuç bulunamadı.
             </div>
           ) : (
             <div className="grid grid-cols-1 items-stretch justify-center gap-4 lg:grid-cols-2">
-              {data.map((u: User) => (
+              {rows.map((u: User) => (
                 <UserCard
                   key={u.id}
                   user={u}
