@@ -61,7 +61,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
               </AlertDialogDescription>
             )}
           </AlertDialogHeader>
-          <AlertDialogFooter>
+          <AlertDialogFooter className="flex justify-center items-center">
             <AlertDialogCancel onClick={() => resolve(false)}>
               {opts.cancelText}
             </AlertDialogCancel>

@@ -128,7 +128,7 @@ export default function Posts() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Ara: başlık, içerik, yazar"
-                className="w-full sm:flex-1 min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                className="w-full min-w-12 sm:flex-1 min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
               />
               <select
                 value={sortBy}

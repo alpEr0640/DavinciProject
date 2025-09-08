@@ -135,8 +135,7 @@ export default function Users() {
           <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between mb-4">
             <h2 className="text-black text-2xl font-bold">Kullanıcılar</h2>
 
-            {/* 🔧 toolbar */}
-            <div className="flex w-full flex-col sm:flex-row sm:flex-wrap gap-2 items-stretch">
+            <div className="flex w-full flex-col  sm:flex-row sm:flex-wrap gap-2 items-stretch">
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
