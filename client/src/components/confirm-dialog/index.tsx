@@ -5,16 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../alert-dialog";
 
 type ConfirmOptions = {
   title: string;
@@ -76,11 +67,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => resolve(true)}
-              className={
-                opts.variant === "destructive"
-                  ? ""
-                  : undefined
-              }
+              className={opts.variant === "destructive" ? "" : undefined}
             >
               {opts.actionText}
             </AlertDialogAction>

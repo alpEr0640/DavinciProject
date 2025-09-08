@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { UserCard } from "./user-card";
 import UserDetailModal from "./user-modal";
 import { useUserActions } from "@/hooks/users";
 import type { User } from "@/services/users/type";
 import { useMainContext } from "@/context/main-context";
-import { Button } from "@/components/ui/button";
-
 import AddUserModal from "./add-user-modal";
 import { useConfirm } from "@/components/confirm-dialog";
+import { Button } from "@/components";
+import toast from "react-hot-toast";
 
 export default function Users() {
   const { getUsers, updateUser, removeUser } = useUserActions();
@@ -16,7 +16,7 @@ export default function Users() {
   const { selectedUserId, setSelectedUserId, scrollToId } = useMainContext();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [createUser, setCreateUser] = useState<boolean>(false);
-
+  const timerRef = useRef<number | null>(null);
   const confirm = useConfirm();
 
   const handleCloseDetailModal = () => {
@@ -35,7 +35,11 @@ export default function Users() {
   const handleSeePosts = (userId: number) => {
     setSelectedUserId(userId);
     handleCloseDetailModal();
-    requestAnimationFrame(() => scrollToId("Posts"));
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      scrollToId("Posts");
+      timerRef.current = null;
+    }, 2000);
   };
 
   const requestDelete = async (user: User) => {
@@ -59,25 +63,37 @@ export default function Users() {
       onSuccess: (ok, deletedId) => {
         if (!ok) alert("Kullanıcı bulunamadı veya zaten silinmiş.");
         else if (selectedUserId === deletedId) setSelectedUserId(undefined);
+        toast.success(`${user.name} silindi`);
       },
-      onError: () => alert("Bir hata oluştu."),
+      onError: () => toast.error("Silme sırasında bir hata oluştu."),
     });
   };
 
   const handleSaveUser = (payload: User) => {
     updateUser.mutate(payload, {
       onSuccess: (ok) => {
-        if (ok) handleCloseDetailModal();
-        else alert("Kullanıcı bulunamadı veya güncellenemedi.");
+        if (ok) {
+          handleCloseDetailModal();
+          toast.success(`${payload.name} Güncellendi`);
+        }
+        else toast.error("Güncelleme sırasında bir hata oluştu.");
       },
     });
   };
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+    },
+    []
+  );
 
   return (
     <section id="Users">
       {!isLoading && !isError && (
         <div className="pt-4">
-          <div className="text-right mb-4">
+          <div className="flex flex-col md:flex-row items-center md:justify-between gap-y-4 mb-4">
+            <h2 className="text-black text-2xl font-bold"> Kullanıcılar </h2>
             <Button onClick={handleOpenCreateUserModal}>
               Yeni Kullanıcı Ekle
             </Button>

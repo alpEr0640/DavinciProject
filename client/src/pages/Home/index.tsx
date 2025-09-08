@@ -1,6 +1,6 @@
 import BackToTop from "@/components/back-to-top";
-import Posts from "./components/posts";
 import Users from "./components/users";
+import Posts from "./components/posts";
 
 export default function Homepage() {
   return (
@@ -11,7 +11,7 @@ export default function Homepage() {
             <Users />
           </div>
 
-          <div className="min-w-0" id="Posts">
+          <div className="min-w-0">
             <Posts />
           </div>
         </div>

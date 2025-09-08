@@ -1,7 +1,7 @@
 import Modal from "./modal";
 import React, { useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { initials } from "@/utils/initial";
+import { Button } from "@/components";
 
 export type Post = {
   id: number;
@@ -19,6 +19,7 @@ type Props = {
   onSave?: (p: Post) => void;
   handleEditClick: (e: React.MouseEvent, post: Post) => void;
   onDelete?: (e: React.MouseEvent, post: Post) => void;
+  authorName?: string;
 };
 
 export default function PostDetailModal({
@@ -30,6 +31,7 @@ export default function PostDetailModal({
   onSave,
   handleEditClick,
   onDelete,
+  authorName,
 }: Props) {
   const [form, setForm] = useState<Post | null>(post);
 
@@ -74,21 +76,32 @@ export default function PostDetailModal({
                 <span className="rounded-full border px-2 py-0.5 text-md border-slate-700 text-slate-300">
                   User ID: {post.userId}
                 </span>
+                <span className="rounded-full border px-2 py-0.5 text-md border-slate-700 text-slate-300">
+                  {authorName}
+                </span>
               </div>
 
-              <div className="mt-4 flex gap-2">
+              <div className="mt-4 flex flex-col md:flex-row gap-2">
                 {!!onSeeUserPosts && (
                   <Button
                     variant="outline"
+                    className="w-full md:w-auto"
                     onClick={(e) => onDelete?.(e, post)}
                   >
                     Gönderiyi Sil
                   </Button>
                 )}
-                <Button onClick={(e) => handleEditClick(e, post)}>
+                <Button
+                  className="w-full md:w-auto"
+                  onClick={(e) => handleEditClick(e, post)}
+                >
                   Gönderiyi Düzenle
                 </Button>
-                <Button variant={"destructive"} onClick={onClose}>
+                <Button
+                  variant={"destructive"}
+                  className="w-full md:w-auto"
+                  onClick={onClose}
+                >
                   Kapat
                 </Button>
               </div>
@@ -123,7 +136,7 @@ export default function PostDetailModal({
                 />
               </div>
 
-              <div className="pt-2 flex gap-2">
+              <div className="mt-4 flex flex-col md:flex-row gap-2">
                 <Button type="submit" disabled={!canSave || !isDirty}>
                   Kaydet
                 </Button>

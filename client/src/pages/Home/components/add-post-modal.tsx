@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import Modal from "./modal";
-import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { getNextPostIdLS, createPostLS } from "@/services/posts";
 import { useUserActions } from "@/hooks/users";
 import type { User } from "@/services/users/type";
 import type { Post } from "@/services/posts/types";
 import { initials } from "@/utils/initial";
+import { Button } from "@/components/button";
 
 type Props = {
   open: boolean;
@@ -82,7 +82,6 @@ export default function AddPostModal({ open, onClose, defaultUserId }: Props) {
             </span>
           </div>
 
-          {/* Kullanıcı seçimi */}
           <div>
             <label className="block text-xs text-slate-400 mb-1">
               Kullanıcı
@@ -102,7 +101,6 @@ export default function AddPostModal({ open, onClose, defaultUserId }: Props) {
             </select>
           </div>
 
-          {/* Başlık */}
           <div>
             <label className="block text-xs text-slate-400 mb-1">Başlık</label>
             <input
@@ -114,8 +112,6 @@ export default function AddPostModal({ open, onClose, defaultUserId }: Props) {
               }
             />
           </div>
-
-          {/* İçerik */}
           <div>
             <label className="block text-xs text-slate-400 mb-1">İçerik</label>
             <textarea

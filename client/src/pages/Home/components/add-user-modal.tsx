@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import Modal from "./modal";
-import { Button } from "@/components/ui/button";
 import { initials } from "@/utils/initial";
 import { createUserLS, getNextUserIdLS } from "@/services/users";
 import { useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components";
 
 export type User = {
   id: number;
