@@ -9,13 +9,15 @@ import { useConfirm } from "@/components/confirm-dialog";
 import PostCard from "./post-card";
 import { Button } from "@/components";
 import toast from "react-hot-toast";
+import { useDebouncedValue } from "@/hooks/debounce";
+
+type PostSortKey = "id" | "title" | "userId";
 
 export default function Posts() {
   const { selectedUserId, setSelectedUserId } = useMainContext();
-
+  const confirm = useConfirm();
   const { getPosts } = usePostsActions(selectedUserId);
   const { data, isLoading, isError, refetch } = getPosts;
-
   const { getUsers } = useUserActions();
   const userById = useMemo(
     () => new Map((getUsers.data ?? []).map((u) => [u.id, u])),
@@ -24,8 +26,37 @@ export default function Posts() {
 
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [editMode, setEditMode] = useState(false);
-  const confirm = useConfirm();
   const [createOpen, setCreateOpen] = useState(false);
+  const [q, setQ] = useState("");
+  const dq = useDebouncedValue(q, 300);
+  const [sortBy, setSortBy] = useState<PostSortKey>("id");
+  const [dir, setDir] = useState<"asc" | "desc">("asc");
+
+
+  /* Arama filtreleme ve sıralama */
+  const rows = useMemo(() => {
+    let rows = data ?? [];
+    const s = dq.trim().toLocaleLowerCase("tr");
+    if (s) {
+      rows = rows.filter((p) => {
+        const author = userById.get(p.userId)?.name ?? "";
+        return [p.title, p.body ?? "", author, String(p.userId), String(p.id)]
+          .filter(Boolean)
+          .some((v) => String(v).toLocaleLowerCase("tr").includes(s));
+      });
+    }
+    rows = [...rows].sort((a, b) => {
+      const av = a[sortBy] as string | number;
+      const bv = b[sortBy] as string | number;
+      if (typeof av === "number" && typeof bv === "number") {
+        return dir === "asc" ? av - bv : bv - av;
+      }
+      return dir === "asc"
+        ? String(av).localeCompare(String(bv), "tr")
+        : String(bv).localeCompare(String(av), "tr");
+    });
+    return rows;
+  }, [data, dq, sortBy, dir, userById]);
 
   const handleOpen = (post: Post, editable = false) => {
     setSelectedPost(post);
@@ -75,19 +106,43 @@ export default function Posts() {
     if (ok) {
       refetch?.();
       handleClose();
-      toast.success(`Gönderi Güncellendi`);
+      toast.success(`Gönderi güncellendi`);
     } else {
       toast.error("Güncelleme sırasında bir hata oluştu.");
     }
   };
 
   return (
-    <section id="Posts">
+    <section id="Posts" className="scroll-mt-20">
       {!isLoading && !isError && (
         <div className="pt-4">
-          <div className="flex flex-col md:flex-row items-center md:justify-between gap-y-4 mb-4">
-            <h2 className="text-black text-2xl font-bold"> Gönderiler </h2>
-            <div className="flex flex-col md:flex-row gap-y-4">
+          <div className="flex flex-col md:flex-row items-center md:justify-between gap-4 mb-4">
+            <h2 className="text-black text-2xl font-bold">Gönderiler</h2>
+
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Ara: başlık, içerik, yazar"
+                className="w-full sm:w-64 rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+              />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as PostSortKey)}
+                className="rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none focus:ring-2 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+              >
+                <option value="id">ID</option>
+                <option value="title">Başlık</option>
+                <option value="userId">Kullanıcı ID</option>
+              </select>
+              <Button
+                variant="outline"
+                onClick={() => setDir((d) => (d === "asc" ? "desc" : "asc"))}
+                title="Sıralama yönü"
+              >
+                {dir === "asc" ? "↑" : "↓"}
+              </Button>
+
               <Button onClick={() => setCreateOpen(true)} className="mx-2">
                 Yeni Gönderi Ekle
               </Button>
@@ -97,13 +152,13 @@ export default function Posts() {
             </div>
           </div>
 
-          {data && data.length === 0 ? (
+          {rows && rows.length === 0 ? (
             <div className="rounded-2xl border p-6 text-slate-600 border-slate-800 bg-slate-900 text-slate-300">
-              Henüz post bulunamadı.
+              Sonuç bulunamadı.
             </div>
           ) : (
             <div className="grid grid-cols-1 items-stretch justify-center gap-4 lg:grid-cols-2">
-              {data?.map((post) => (
+              {rows?.map((post) => (
                 <PostCard
                   key={post.id}
                   post={post}
