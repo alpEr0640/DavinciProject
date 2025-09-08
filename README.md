@@ -5,7 +5,7 @@ JSONPlaceholder API’sini kullanarak Users ve Posts listelerini gösteren, CRUD
 
 **Canlı Proje Linki**
 
-- https://davinci-project-seven.vercel.app/
+- [https://davinci-project-seven.vercel.app/](https://davinci-project-seven.vercel.app/)
 
 ## **Projeyi Klonlama ve Kurulum**
 
