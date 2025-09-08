@@ -15,7 +15,8 @@ JSONPlaceholder API’sini kullanarak Users ve Posts listelerini gösteren, CRUD
 git clone https://github.com/alpEr0640/DavinciProject.git
 ```
 ## Client dizinine gir
-```bash 
+```bash
+cd DavinciProject
 cd client
 ```
 ## Bağımlılıkları yükle
